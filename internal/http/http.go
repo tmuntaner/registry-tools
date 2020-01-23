@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	url2 "net/url"
 )
 
 type RegistryHttpClient struct {}
@@ -30,7 +31,14 @@ func (c RegistryHttpClient) Get(url string) (int, http.Header, []byte, error) {
 
 func (RegistryHttpClient) httpGet(url string, token string) (int, http.Header, []byte, error) {
 
-	req, err := http.NewRequest("GET", url, nil)
+	parsed, err := url2.Parse(url)
+	if err != nil {
+		return 0, nil, nil, err
+	} else if parsed.Scheme == "" {
+		parsed.Scheme = "https"
+	}
+
+	req, err := http.NewRequest("GET", parsed.String(), nil)
 	if err != nil {
 		return 0, nil, nil, err
 	}

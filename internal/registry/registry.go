@@ -17,7 +17,7 @@ type RepoListResponse struct {
 
 func (c Client) RepositoryList(repo string) ([]string, error) {
 
-	url := fmt.Sprintf("https://%s/v2/_catalog", repo)
+	url := fmt.Sprintf("%s/v2/_catalog", repo)
 
 	_, _, body, err := httpClient.Get(url)
 	if err != nil {
@@ -40,7 +40,7 @@ type TagListResponse struct {
 
 func (c Client) TagList(image parser.DockerImage) ([]string, error) {
 
-	url := fmt.Sprintf("https://%s/v2/%s/tags/list", image.Host, image.Image)
+	url := fmt.Sprintf("%s/v2/%s/tags/list", image.Host, image.Image)
 
 	_, _, body, err := httpClient.Get(url)
 	if err != nil {

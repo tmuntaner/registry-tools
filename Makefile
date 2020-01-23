@@ -7,4 +7,5 @@ clean:
 	rm -f _output/*
 
 build: clean
-	go build -o _output ./cmd/...
+	go build -o _output -mod vendor ./cmd/...
+	tar -cvzf _output/vendor.tar.gz vendor
