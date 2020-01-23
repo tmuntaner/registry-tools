@@ -7,15 +7,18 @@ import (
 )
 
 var tagsCmd = &cobra.Command{
-	Use:   "tags [repo]",
+	Use:   "tags [repository]",
 	Short: "List tags for a repository",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		image, err := registryParser.GunToImage(args[0])
+		registryUrl, err := cmd.Flags().GetString("registry")
+		image, err := registryParser.GunToImage(args[0], registryUrl)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
+		} else if registryUrl != "" {
+			image.Host = registryUrl
 		}
 
 		tags, err := registryClient.TagList(image)

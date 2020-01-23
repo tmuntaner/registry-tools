@@ -12,7 +12,7 @@ type DockerImage struct {
 
 type RegistryParser struct {}
 
-func (c RegistryParser) GunToImage(input string) (DockerImage, error) {
+func (c RegistryParser) GunToImage(input string, registryUrl string) (DockerImage, error) {
 
 	tagParts := strings.SplitN(input, ":", 2)
 	var gun string
@@ -29,19 +29,29 @@ func (c RegistryParser) GunToImage(input string) (DockerImage, error) {
 	stringParts := strings.SplitN(gun, "/", 2)
 	image := DockerImage{}
 
-	if len(stringParts) == 1 || (!strings.Contains(stringParts[0], ".") &&
-		!strings.Contains(stringParts[0], ":") && !strings.Contains(stringParts[0], "localhost")) {
-		// Docker Index repositories
-		image.Host = "registry-1.docker.io"
-		image.Image = gun
-
-		if len(stringParts) == 1 {
+	if len(stringParts) == 1 {
+		if registryUrl == "" {
+			image.Host = "registry-1.docker.io"
 			image.Image = "library/" + gun
+		} else {
+			image.Host = registryUrl
+			image.Image = gun
+		}
+	} else if !strings.Contains(stringParts[0], ".") &&
+		!strings.Contains(stringParts[0], ":") &&
+		!strings.Contains(stringParts[0], "localhost") {
+
+		image.Image = gun
+		if registryUrl == "" {
+			image.Host = "registry-1.docker.io"
+		} else {
+			image.Host = registryUrl
 		}
 	} else {
 		image.Host = stringParts[0]
 		image.Image = stringParts[1]
 	}
+
 	image.Tag = tag
 
 	return image, nil

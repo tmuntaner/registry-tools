@@ -20,6 +20,7 @@ func Execute() {
 }
 
 func init() {
+	tagsCmd.Flags().StringP("registry", "r", "", "URL for registry")
 	rootCmd.AddCommand(reposCmd)
 	rootCmd.AddCommand(tagsCmd)
 }

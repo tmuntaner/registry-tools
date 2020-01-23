@@ -7,7 +7,7 @@ import (
 )
 
 var reposCmd = &cobra.Command{
-	Use:   "repositories [repository]",
+	Use:   "repositories [registry]",
 	Short: "List repositories in registry",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
