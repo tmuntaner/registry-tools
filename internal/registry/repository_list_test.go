@@ -11,9 +11,9 @@ import (
 func TestRepositoryList(t *testing.T) {
 	expected := []string{"foo", "bar"}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := json.Marshal(RepoListResponse{Repositories: expected})
+		body, _ := json.Marshal(repoListResponse{Repositories: expected})
 		w.WriteHeader(200)
-		_,_ = w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
@@ -36,7 +36,7 @@ func TestRepositoryListWithError(t *testing.T) {
 func TestRepositoryListWithBadJSON(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
-		_,_ = w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()

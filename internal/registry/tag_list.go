@@ -7,11 +7,12 @@ import (
 	"github.com/tmuntaner/registry-tools/internal/parser"
 )
 
-type TagListResponse struct {
+type tagListResponse struct {
 	Name string   `json:"name"`
 	Tags []string `json:"tags"`
 }
 
+// TagList returns a list of tags from a repository.
 func TagList(image parser.DockerImage) ([]string, error) {
 
 	url := fmt.Sprintf("%s/v2/%s/tags/list", image.Host, image.Image)
@@ -22,7 +23,7 @@ func TagList(image parser.DockerImage) ([]string, error) {
 		return []string{}, err
 	}
 
-	var tagListResponse TagListResponse
+	var tagListResponse tagListResponse
 	err = json.Unmarshal(body, &tagListResponse)
 	if err != nil {
 		return []string{}, err

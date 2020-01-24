@@ -7,10 +7,11 @@ import (
 	"regexp"
 )
 
-type RepoListResponse struct {
+type repoListResponse struct {
 	Repositories []string `json:"repositories"`
 }
 
+// RepositoryList returns a list of repositories from a docker registry.
 func RepositoryList(repo string) ([]string, error) {
 
 	client := regHTTP.RegistryHTTPClient{}
@@ -23,7 +24,7 @@ func RepositoryList(repo string) ([]string, error) {
 			return repositories, err
 		}
 
-		var repoListResponse RepoListResponse
+		var repoListResponse repoListResponse
 		err = json.Unmarshal(body, &repoListResponse)
 		if err != nil {
 			return repositories, err
@@ -34,11 +35,11 @@ func RepositoryList(repo string) ([]string, error) {
 		if linkHeader == "" {
 			return repositories, nil
 		}
-		url = repo + ParseLink(linkHeader)
+		url = repo + parseLink(linkHeader)
 	}
 }
 
-func ParseLink(link string) string {
+func parseLink(link string) string {
 
 	regExp := regexp.MustCompile(`\<(?P<url>.*)\>`)
 	result := make(map[string]string)

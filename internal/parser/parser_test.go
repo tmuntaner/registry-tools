@@ -6,9 +6,9 @@ import (
 )
 
 var gunTests = []struct {
-	gun      string
-	registryUrl string
-	expected DockerImage
+	gun         string
+	registryURL string
+	expected    DockerImage
 }{
 	{
 		"foo",
@@ -96,7 +96,7 @@ var gunTests = []struct {
 func TestGunToImage(t *testing.T) {
 
 	for _, test := range gunTests {
-		result, err := GunToImage(test.gun, test.registryUrl)
+		result, err := GunToImage(test.gun, test.registryURL)
 
 		assert.Nil(t, err)
 		assert.Equal(t, result.Image, test.expected.Image)

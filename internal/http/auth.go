@@ -9,7 +9,7 @@ import (
 	"regexp"
 )
 
-type TokenResponse struct {
+type tokenResponse struct {
 	Token       string `json:"token"`
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
@@ -23,11 +23,10 @@ func tryAuth(headers http.Header) (string, error) {
 	if headers == nil {
 		// auth was needed, but there were no request headers
 		return "", errors.New("auth required, but request headers were empty")
-	} else {
-		authHeader := headers.Get("Www-Authenticate")
-		realm, service, scope = parseAuthHeader(authHeader)
 	}
 
+	authHeader := headers.Get("Www-Authenticate")
+	realm, service, scope = parseAuthHeader(authHeader)
 	if realm == "" || service == "" {
 		return "", errors.New("auth required, but realm/service is null")
 	}
@@ -44,7 +43,7 @@ func getAuthToken(realm string, service string, scope string) (string, error) {
 		return "", err
 	}
 
-	var tokenResponse TokenResponse
+	var tokenResponse tokenResponse
 	err = json.Unmarshal(body, &tokenResponse)
 	if err != nil {
 		return "", err
