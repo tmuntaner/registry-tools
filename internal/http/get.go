@@ -8,9 +8,12 @@ import (
 	"strings"
 )
 
-func Get(url string) (int, http.Header, []byte, error) {
+type RegistryHTTPClient struct {
+	Token string
+}
+func (c *RegistryHTTPClient) Get(url string) (int, http.Header, []byte, error) {
 
-	statusCode, headers, body, err := httpGet(url, "")
+	statusCode, headers, body, err := httpGet(url, c.Token)
 	if err != nil {
 		return statusCode, headers, body, err
 	} else if statusCode == 200 {
@@ -19,12 +22,12 @@ func Get(url string) (int, http.Header, []byte, error) {
 		return statusCode, headers, body, errors.New(fmt.Sprintf("request failed with status code: %d", statusCode))
 	}
 
-	token, err := tryAuth(headers)
+	c.Token, err = tryAuth(headers)
 	if err != nil {
 		return statusCode, headers, body, err
 	}
 
-	return httpGet(url, token)
+	return httpGet(url, c.Token)
 }
 
 func httpGet(url string, token string) (int, http.Header, []byte, error) {

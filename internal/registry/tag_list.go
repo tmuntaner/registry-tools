@@ -16,7 +16,8 @@ func TagList(image parser.DockerImage) ([]string, error) {
 
 	url := fmt.Sprintf("%s/v2/%s/tags/list", image.Host, image.Image)
 
-	_, _, body, err := regHTTP.Get(url)
+	client := regHTTP.RegistryHTTPClient{}
+	_, _, body, err := client.Get(url)
 	if err != nil {
 		return []string{}, err
 	}
