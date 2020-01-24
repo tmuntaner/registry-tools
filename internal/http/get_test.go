@@ -17,8 +17,7 @@ func TestGet(t *testing.T) {
 
 	defer ts.Close()
 
-	client := RegistryHttpClient{}
-	statusCode, _, body, err := client.Get(ts.URL)
+	statusCode, _, body, err := Get(ts.URL)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, statusCode)
 	assert.Equal(t, "foo", string(body))
@@ -32,8 +31,7 @@ func TestGetWithMalformedUrl(t *testing.T) {
 
 	defer ts.Close()
 
-	client := RegistryHttpClient{}
-	_, _, _, err := client.Get("ht\ntp://www.foo.com")
+	_, _, _, err := Get("ht\ntp://www.foo.com")
 	assert.NotNil(t, err)
 }
 
@@ -45,8 +43,7 @@ func TestGetWithServerError(t *testing.T) {
 
 	defer ts.Close()
 
-	client := RegistryHttpClient{}
-	statusCode, _, body, err := client.Get(ts.URL)
+	statusCode, _, body, err := Get(ts.URL)
 	assert.NotNil(t, err)
 	assert.Equal(t, http.StatusInternalServerError, statusCode)
 	assert.Equal(t, "foo", string(body))
@@ -62,8 +59,7 @@ func TestGetWithError(t *testing.T) {
 
 	defer ts.Close()
 
-	client := RegistryHttpClient{}
-	_, _, _, err := client.Get(ts.URL)
+	_, _, _, err := Get(ts.URL)
 	assert.NotNil(t, err)
 }
 
@@ -76,9 +72,8 @@ func TestDefaultHttps(t *testing.T) {
 
 	defer ts.Close()
 
-	client := RegistryHttpClient{}
 	url := strings.Replace(ts.URL, "https://", "", -1)
-	statusCode, _, body, err := client.Get(url)
+	statusCode, _, body, err := Get(url)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, statusCode)
 	assert.Equal(t, "foo", string(body))
@@ -113,8 +108,7 @@ func TestRegistryHttpClientWith401(t *testing.T) {
 	defer regServer.Close()
 	defer authServer.Close()
 
-	client := RegistryHttpClient{}
-	statusCode, _, body, err := client.Get(regServer.URL)
+	statusCode, _, body, err := Get(regServer.URL)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusUnauthorized, statusCode)
 	assert.Equal(t, "foo", string(body))
@@ -134,8 +128,7 @@ func TestRegistryHttpClientWith401Error(t *testing.T) {
 	defer regServer.Close()
 	defer authServer.Close()
 
-	client := RegistryHttpClient{}
-	statusCode, _, body, err := client.Get(regServer.URL)
+	statusCode, _, body, err := Get(regServer.URL)
 	assert.NotNil(t, err)
 	assert.Equal(t, http.StatusUnauthorized, statusCode)
 	assert.Equal(t, "foo", string(body))

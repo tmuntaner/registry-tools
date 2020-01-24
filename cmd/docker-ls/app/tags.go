@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/tmuntaner/registry-tools/internal/parser"
+	"github.com/tmuntaner/registry-tools/internal/registry"
 	"os"
 )
 
@@ -22,7 +23,7 @@ var tagsCmd = &cobra.Command{
 			image.Host = registryUrl
 		}
 
-		tags, err := registryClient.TagList(image)
+		tags, err := registry.TagList(image)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

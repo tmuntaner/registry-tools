@@ -8,9 +8,7 @@ import (
 	"strings"
 )
 
-type RegistryHttpClient struct {}
-
-func (c RegistryHttpClient) Get(url string) (int, http.Header, []byte, error) {
+func Get(url string) (int, http.Header, []byte, error) {
 
 	statusCode, headers, body, err := httpGet(url, "")
 	if err != nil {

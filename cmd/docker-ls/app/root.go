@@ -3,12 +3,10 @@ package app
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	registry "github.com/tmuntaner/registry-tools/internal/registry"
 	"os"
 )
 
 var rootCmd = &cobra.Command{}
-var registryClient registry.Client
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
