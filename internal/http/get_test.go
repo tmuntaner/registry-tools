@@ -40,7 +40,7 @@ func TestGetWithMalformedUrl(t *testing.T) {
 func TestGetWithServerError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()
@@ -55,7 +55,7 @@ func TestGetWithServerError(t *testing.T) {
 func TestGetWithError(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 	// we would need to uncomment the following line to get this test to pass. We rely on the DefaultClient not having access to the tls certs.
 	// http.DefaultClient = ts.Client()
@@ -70,7 +70,7 @@ func TestGetWithError(t *testing.T) {
 func TestDefaultHttps(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 	http.DefaultClient = ts.Client()
 
@@ -87,7 +87,7 @@ func TestDefaultHttps(t *testing.T) {
 func TestRegistryHttpClientWithToken(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()
@@ -102,12 +102,12 @@ func TestRegistryHttpClientWith401(t *testing.T) {
 	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		body, _ := json.Marshal(TokenResponse{Token: "foo"})
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 	regServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Www-Authenticate",  `Bearer realm="`+ authServer.URL + `",service="foo-service",scope="foo-scope"`)
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer regServer.Close()
@@ -123,12 +123,12 @@ func TestRegistryHttpClientWith401(t *testing.T) {
 func TestRegistryHttpClientWith401Error(t *testing.T) {
 	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 	regServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Www-Authenticate",  `Bearer realm="`+ authServer.URL + `",service="foo-service",scope="foo-scope"`)
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer regServer.Close()

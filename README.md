@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/tmuntaner/registry-tools.svg?branch=master)](https://travis-ci.org/tmuntaner/registry-tools)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tmuntaner/registry-tools)](https://goreportcard.com/report/github.com/tmuntaner/registry-tools)
 
 # Registry Tools
 
