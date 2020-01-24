@@ -1,0 +1,8 @@
+dist: xenial
+arch: amd64
+language: go
+go: 1.13.x
+git:
+  depth: 1
+script:
+  - go test -v -race ./internal/...
