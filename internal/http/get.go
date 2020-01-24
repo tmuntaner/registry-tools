@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	url2 "net/url"
+	"strings"
 )
 
 type RegistryHttpClient struct {}
 
 func (c RegistryHttpClient) Get(url string) (int, http.Header, []byte, error) {
 
-	statusCode, headers, body, err := c.httpGet(url, "")
+	statusCode, headers, body, err := httpGet(url, "")
 	if err != nil {
 		return statusCode, headers, body, err
 	} else if statusCode == 200 {
@@ -21,24 +21,21 @@ func (c RegistryHttpClient) Get(url string) (int, http.Header, []byte, error) {
 		return statusCode, headers, body, errors.New(fmt.Sprintf("request failed with status code: %d", statusCode))
 	}
 
-	token, err := c.auth(url)
+	token, err := tryAuth(headers)
 	if err != nil {
 		return statusCode, headers, body, err
 	}
 
-	return c.httpGet(url, token)
+	return httpGet(url, token)
 }
 
-func (RegistryHttpClient) httpGet(url string, token string) (int, http.Header, []byte, error) {
+func httpGet(url string, token string) (int, http.Header, []byte, error) {
 
-	parsed, err := url2.Parse(url)
-	if err != nil {
-		return 0, nil, nil, err
-	} else if parsed.Scheme == "" {
-		parsed.Scheme = "https"
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		url = "https://" + url
 	}
 
-	req, err := http.NewRequest("GET", parsed.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return 0, nil, nil, err
 	}
@@ -48,8 +45,7 @@ func (RegistryHttpClient) httpGet(url string, token string) (int, http.Header, [
 		req.Header.Set("Authorization", authHeader)
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return 0, nil, nil, err
 	}
@@ -58,12 +54,7 @@ func (RegistryHttpClient) httpGet(url string, token string) (int, http.Header, [
 
 	buf := new(bytes.Buffer)
 	_, err = buf.ReadFrom(resp.Body)
-	if err != nil {
-		return 0, nil, nil, err
-	}
 
-	body := buf.String()
-
-	return resp.StatusCode, resp.Header, []byte(body), nil
+	return resp.StatusCode, resp.Header, []byte(buf.String()), err
 }
 
