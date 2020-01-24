@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	regHTTP "github.com/tmuntaner/registry-tools/internal/http"
+	"regexp"
 )
 
 type RepoListResponse struct {
@@ -12,18 +13,45 @@ type RepoListResponse struct {
 
 func RepositoryList(repo string) ([]string, error) {
 
-	url := fmt.Sprintf("%s/v2/_catalog", repo)
+	client := regHTTP.RegistryHTTPClient{}
+	url := fmt.Sprintf("%s/v2/_catalog?n=500", repo)
+	var repositories []string
 
-	_, _, body, err := regHTTP.Get(url)
-	if err != nil {
-		return []string{}, err
+	for {
+		_, headers, body, err := client.Get(url)
+		if err != nil {
+			return repositories, err
+		}
+
+		var repoListResponse RepoListResponse
+		err = json.Unmarshal(body, &repoListResponse)
+		if err != nil {
+			return repositories, err
+		}
+
+		repositories = append(repositories, repoListResponse.Repositories...)
+		linkHeader := headers.Get("Link")
+		if linkHeader == "" {
+			return repositories, nil
+		}
+		url = repo + ParseLink(linkHeader)
+	}
+}
+
+func ParseLink(link string) string {
+
+	regExp := regexp.MustCompile(`\<(?P<url>.*)\>`)
+	result := make(map[string]string)
+	matches := regExp.FindStringSubmatch(link)
+	if len(matches) < 1 {
+		return ""
 	}
 
-	var repoListResponse RepoListResponse
-	err = json.Unmarshal(body, &repoListResponse)
-	if err != nil {
-		return []string{}, err
+	for i, name := range regExp.SubexpNames() {
+		if i != 0 {
+			result[name] = matches[i]
+		}
 	}
 
-	return repoListResponse.Repositories, err
+	return result["url"]
 }
