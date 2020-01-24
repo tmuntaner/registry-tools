@@ -49,7 +49,7 @@ func TestGetAuthTokenWithError(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		body, _ := json.Marshal(TokenResponse{Token: "foo"})
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
@@ -62,7 +62,7 @@ func TestGetAuthTokenWithToken(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		body, _ := json.Marshal(TokenResponse{Token: "foo"})
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
@@ -76,7 +76,7 @@ func TestGetAuthTokenWithAccessToken(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		body, _ := json.Marshal(TokenResponse{AccessToken: "foo"})
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
@@ -90,7 +90,7 @@ func TestTryAuth(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		body, _ := json.Marshal(TokenResponse{AccessToken: "foo"})
-		w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
