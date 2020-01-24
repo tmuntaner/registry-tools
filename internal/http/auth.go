@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	url2 "net/url"
 	"regexp"
 )
@@ -15,51 +16,30 @@ type TokenResponse struct {
 	IssuedAt    string `json:"issued_at"`
 }
 
-func (c RegistryHttpClient) auth(url string) (string, error) {
-
-	realm, service, scope, err := c.getAuthService(url)
-	if err != nil {
-		return "", err
-	}
-
-	return c.getAuthToken(realm, service, scope)
-}
-
-func (c RegistryHttpClient) getAuthService(url string) (string, string, string, error) {
+func tryAuth(headers http.Header) (string, error) {
 
 	realm, service, scope := "", "", ""
 
-	statusCode, headers, _, err := c.httpGet(url, "")
-
-	// verify that authentication is actually required
-	if statusCode == 200 {
-		return "", "", "", nil
-	}
-
 	if headers == nil {
 		// auth was needed, but there were no request headers
-		return "", "", "", errors.New("auth required, but request headers were empty")
-	} else if statusCode == 401 {
-		authHeader := headers.Get("Www-Authenticate")
-		realm, service, scope = c.parseAuthHeader(authHeader)
+		return "", errors.New("auth required, but request headers were empty")
 	} else {
-		// our auth request gave us an unexpected status code
-		errorMessage := fmt.Sprintf("url \"%s\" gave code %d", url, statusCode)
-		return "", "", "", errors.New(errorMessage)
+		authHeader := headers.Get("Www-Authenticate")
+		realm, service, scope = parseAuthHeader(authHeader)
 	}
 
 	if realm == "" || service == "" {
-		return "", "", "", errors.New("auth required, but realm/service is null")
+		return "", errors.New("auth required, but realm/service is null")
 	}
 
-	return realm, service, scope, err
+	return getAuthToken(realm, service, scope)
 }
 
-func (c RegistryHttpClient) getAuthToken(realm string, service string, scope string) (string, error) {
+func getAuthToken(realm string, service string, scope string) (string, error) {
 
 	url := fmt.Sprintf("%s?service=%s&scope=%s", realm, url2.QueryEscape(service), url2.QueryEscape(scope))
 
-	_, _, body, err := c.httpGet(url, "")
+	_, _, body, err := httpGet(url, "")
 	if err != nil {
 		return "", err
 	}
@@ -77,7 +57,7 @@ func (c RegistryHttpClient) getAuthToken(realm string, service string, scope str
 	return tokenResponse.AccessToken, nil
 }
 
-func (c RegistryHttpClient) parseAuthHeader(header string) (string, string, string) {
+func parseAuthHeader(header string) (string, string, string) {
 
 	regExp := regexp.MustCompile(`Bearer realm="(?P<realm>[^"]*)",service="(?P<service>[^"]*)"(?:,scope=")?(?P<scope>[^"]*)(?:")?`)
 	result := make(map[string]string)

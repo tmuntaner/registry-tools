@@ -10,9 +10,7 @@ type DockerImage struct {
 	Tag   string
 }
 
-type RegistryParser struct {}
-
-func (c RegistryParser) GunToImage(input string, registryUrl string) (DockerImage, error) {
+func GunToImage(input string, registryUrl string) (DockerImage, error) {
 
 	tagParts := strings.SplitN(input, ":", 2)
 	var gun string
