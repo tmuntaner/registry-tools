@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/tmuntaner/registry-tools/internal/parser"
 	"os"
 )
 
@@ -13,7 +14,7 @@ var tagsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		registryUrl, err := cmd.Flags().GetString("registry")
-		image, err := registryParser.GunToImage(args[0], registryUrl)
+		image, err := parser.GunToImage(args[0], registryUrl)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
