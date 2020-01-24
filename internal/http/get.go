@@ -2,7 +2,6 @@ package http
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -19,7 +18,7 @@ func (c *RegistryHTTPClient) Get(url string) (int, http.Header, []byte, error) {
 	} else if statusCode == 200 {
 		return statusCode, headers, body, nil
 	} else if statusCode != 401 {
-		return statusCode, headers, body, errors.New(fmt.Sprintf("request failed with status code: %d", statusCode))
+		return statusCode, headers, body, fmt.Errorf("request failed with status code: %d", statusCode)
 	}
 
 	c.Token, err = tryAuth(headers)
@@ -56,6 +55,6 @@ func httpGet(url string, token string) (int, http.Header, []byte, error) {
 	buf := new(bytes.Buffer)
 	_, err = buf.ReadFrom(resp.Body)
 
-	return resp.StatusCode, resp.Header, []byte(buf.String()), err
+	return resp.StatusCode, resp.Header, buf.Bytes(), err
 }
 
