@@ -30,4 +30,5 @@ Registry-Tools is a collection of tools to help work with docker registries.
 
 * `docker-ls tags nginx`
 * `docker-ls tags opensuse/leap`
-* `docker-ls tags opensuse/leap`
+* `docker-ls tags registry.suse.com/suse/sle15`
+* `docker-ls tags suse/sle15 -r registry.suse.com`
