@@ -4,13 +4,15 @@ import (
 	"strings"
 )
 
+// DockerImage is a representation of a docker image with its host, image, and tag
 type DockerImage struct {
 	Host  string
 	Image string
 	Tag   string
 }
 
-func GunToImage(input string, registryUrl string) (DockerImage, error) {
+// GunToImage will convert an input string of a GUN and convert it to a DockerImage struct
+func GunToImage(input string, registryURL string) (DockerImage, error) {
 
 	tagParts := strings.SplitN(input, ":", 2)
 	var gun string
@@ -28,11 +30,11 @@ func GunToImage(input string, registryUrl string) (DockerImage, error) {
 	image := DockerImage{}
 
 	if len(stringParts) == 1 {
-		if registryUrl == "" {
+		if registryURL == "" {
 			image.Host = "registry-1.docker.io"
 			image.Image = "library/" + gun
 		} else {
-			image.Host = registryUrl
+			image.Host = registryURL
 			image.Image = gun
 		}
 	} else if !strings.Contains(stringParts[0], ".") &&
@@ -40,10 +42,10 @@ func GunToImage(input string, registryUrl string) (DockerImage, error) {
 		!strings.Contains(stringParts[0], "localhost") {
 
 		image.Image = gun
-		if registryUrl == "" {
+		if registryURL == "" {
 			image.Host = "registry-1.docker.io"
 		} else {
-			image.Host = registryUrl
+			image.Host = registryURL
 		}
 	} else {
 		image.Host = stringParts[0]

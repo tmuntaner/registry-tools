@@ -14,17 +14,17 @@ var tagsCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		registryUrl, err := cmd.Flags().GetString("registry")
+		registryURL, err := cmd.Flags().GetString("registry")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		image, err := parser.GunToImage(args[0], registryUrl)
+		image, err := parser.GunToImage(args[0], registryURL)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
-		} else if registryUrl != "" {
-			image.Host = registryUrl
+		} else if registryURL != "" {
+			image.Host = registryURL
 		}
 
 		tags, err := registry.TagList(image)

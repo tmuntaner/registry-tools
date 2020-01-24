@@ -12,7 +12,7 @@ import (
 func TestGet(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		_,_ = w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()
@@ -27,7 +27,7 @@ func TestGet(t *testing.T) {
 func TestGetWithMalformedUrl(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
-		_,_ = w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()
@@ -101,11 +101,11 @@ func TestRegistryHttpClientWithToken(t *testing.T) {
 func TestRegistryHttpClientWith401(t *testing.T) {
 	authServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		body, _ := json.Marshal(TokenResponse{Token: "foo"})
+		body, _ := json.Marshal(tokenResponse{Token: "foo"})
 		_, _ = w.Write(body)
 	}))
 	regServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Www-Authenticate",  `Bearer realm="`+ authServer.URL + `",service="foo-service",scope="foo-scope"`)
+		w.Header().Add("Www-Authenticate", `Bearer realm="`+authServer.URL+`",service="foo-service",scope="foo-scope"`)
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte("foo"))
 	}))
@@ -126,7 +126,7 @@ func TestRegistryHttpClientWith401Error(t *testing.T) {
 		_, _ = w.Write([]byte("foo"))
 	}))
 	regServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Www-Authenticate",  `Bearer realm="`+ authServer.URL + `",service="foo-service",scope="foo-scope"`)
+		w.Header().Add("Www-Authenticate", `Bearer realm="`+authServer.URL+`",service="foo-service",scope="foo-scope"`)
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte("foo"))
 	}))

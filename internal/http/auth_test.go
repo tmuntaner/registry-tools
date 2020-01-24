@@ -44,11 +44,10 @@ func TestParseAuthHeader(t *testing.T) {
 	}
 }
 
-
 func TestGetAuthTokenWithError(t *testing.T) {
 	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		body, _ := json.Marshal(TokenResponse{Token: "foo"})
+		body, _ := json.Marshal(tokenResponse{Token: "foo"})
 		_, _ = w.Write(body)
 	}))
 
@@ -61,7 +60,7 @@ func TestGetAuthTokenWithError(t *testing.T) {
 func TestGetAuthTokenWithToken(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		body, _ := json.Marshal(TokenResponse{Token: "foo"})
+		body, _ := json.Marshal(tokenResponse{Token: "foo"})
 		_, _ = w.Write(body)
 	}))
 
@@ -75,7 +74,7 @@ func TestGetAuthTokenWithToken(t *testing.T) {
 func TestGetAuthTokenWithAccessToken(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		body, _ := json.Marshal(TokenResponse{AccessToken: "foo"})
+		body, _ := json.Marshal(tokenResponse{AccessToken: "foo"})
 		_, _ = w.Write(body)
 	}))
 
@@ -89,14 +88,14 @@ func TestGetAuthTokenWithAccessToken(t *testing.T) {
 func TestTryAuth(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		body, _ := json.Marshal(TokenResponse{AccessToken: "foo"})
+		body, _ := json.Marshal(tokenResponse{AccessToken: "foo"})
 		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
 
 	headers := http.Header{}
-	headers.Add("Www-Authenticate",  `Bearer realm="`+ ts.URL + `",service="foo-service",scope="foo-scope"`)
+	headers.Add("Www-Authenticate", `Bearer realm="`+ts.URL+`",service="foo-service",scope="foo-scope"`)
 
 	token, err := tryAuth(headers)
 	assert.Nil(t, err)

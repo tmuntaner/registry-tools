@@ -7,9 +7,12 @@ import (
 	"strings"
 )
 
+// RegistryHTTPClient is a client to communicate with a docker registry
 type RegistryHTTPClient struct {
 	Token string
 }
+
+// Get will run a HTTP GET request against a registry.
 func (c *RegistryHTTPClient) Get(url string) (int, http.Header, []byte, error) {
 
 	statusCode, headers, body, err := httpGet(url, c.Token)
@@ -57,4 +60,3 @@ func httpGet(url string, token string) (int, http.Header, []byte, error) {
 
 	return resp.StatusCode, resp.Header, buf.Bytes(), err
 }
-

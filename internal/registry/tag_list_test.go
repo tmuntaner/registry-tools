@@ -12,9 +12,9 @@ import (
 func TestTagList(t *testing.T) {
 	expected := []string{"foo", "bar"}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, _ := json.Marshal(TagListResponse{Tags: expected})
+		body, _ := json.Marshal(tagListResponse{Tags: expected})
 		w.WriteHeader(200)
-		_,_ = w.Write(body)
+		_, _ = w.Write(body)
 	}))
 
 	defer ts.Close()
@@ -39,7 +39,7 @@ func TestTagListWithError(t *testing.T) {
 func TestTagListWithBadJSON(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
-		_,_ = w.Write([]byte("foo"))
+		_, _ = w.Write([]byte("foo"))
 	}))
 
 	defer ts.Close()
