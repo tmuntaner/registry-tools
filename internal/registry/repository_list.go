@@ -35,17 +35,21 @@ func RepositoryList(repo string) ([]string, error) {
 		if linkHeader == "" {
 			return repositories, nil
 		}
-		url = repo + parseLink(linkHeader)
+		next, err := parseLink(linkHeader)
+		if err != nil {
+			return repositories, err
+		}
+		url = repo + next
 	}
 }
 
-func parseLink(link string) string {
+func parseLink(link string) (string, error) {
 
 	regExp := regexp.MustCompile(`\<(?P<url>.*)\>`)
 	result := make(map[string]string)
 	matches := regExp.FindStringSubmatch(link)
 	if len(matches) < 1 {
-		return ""
+		return "", fmt.Errorf("could not parse next page with header: %s", link)
 	}
 
 	for i, name := range regExp.SubexpNames() {
@@ -54,5 +58,5 @@ func parseLink(link string) string {
 		}
 	}
 
-	return result["url"]
+	return result["url"], nil
 }
